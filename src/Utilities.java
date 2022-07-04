@@ -62,6 +62,8 @@ public class Utilities {
     }
 
     /**
+     * Re-prompts user until they input a valid double
+     *
      * @param prompt   Message displayed to the user
      * @param minValue Minimum value accepted from the user
      * @return The double value from the user
@@ -83,6 +85,8 @@ public class Utilities {
     }
 
     /**
+     * Re-prompts user until they enter a valid int. Can optionally show error message to user.
+     *
      * @param retry True = show error message, False = hide error message
      * @return Int value from user
      */
