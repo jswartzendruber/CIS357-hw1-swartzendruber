@@ -1,8 +1,12 @@
 import java.util.Arrays;
 import java.util.Comparator;
 
+/**
+ * This object exists to hold an array of item sales, and to display totals for the sale as well as a
+ * sorted breakdown of each item.
+ */
 public class Sale {
-    private final SingleItemSale[] singleItemSales = new SingleItemSale[10];
+    private final ItemSale[] itemSales = new ItemSale[10];
 
     /**
      * Sums item sales and returns the total
@@ -12,9 +16,9 @@ public class Sale {
     public double subtotal() {
         double subtotal = 0;
 
-        for (SingleItemSale singleItemSale : singleItemSales) {
-            if (singleItemSale != null) {
-                subtotal += singleItemSale.getItemQuantity() * singleItemSale.getItem().getUnitPrice();
+        for (ItemSale itemSale : itemSales) {
+            if (itemSale != null) {
+                subtotal += itemSale.getItemQuantity() * itemSale.getUnitPrice();
             }
         }
 
@@ -33,18 +37,18 @@ public class Sale {
     /**
      * Adds an individual item sale to the overall sale
      *
-     * @param singleItemSale The individual item sale to be added to the current sale
+     * @param itemSale The individual item sale to be added to the current sale
      */
-    public void addSale(SingleItemSale singleItemSale) {
-        int itemCode = singleItemSale.getItem().getItemCode() - 1; // Normalize item code to array
-        if (singleItemSales[itemCode] == null) {
+    public void addSale(ItemSale itemSale) {
+        int itemCode = itemSale.getItemCode() - 1; // Normalize item code to array
+        if (itemSales[itemCode] == null) {
             // This item has not been sold yet
-            singleItemSales[itemCode] = singleItemSale;
+            itemSales[itemCode] = itemSale;
         } else {
             // This item has been sold, need to combine sales
-            int alreadySoldAmount = singleItemSales[itemCode].getItemQuantity();
-            SingleItemSale newSale = new SingleItemSale(singleItemSale.getItem(), alreadySoldAmount + singleItemSale.getItemQuantity());
-            singleItemSales[itemCode] = newSale;
+            int alreadySoldAmount = itemSales[itemCode].getItemQuantity();
+            ItemSale newSale = new ItemSale(itemSale, alreadySoldAmount + itemSale.getItemQuantity());
+            itemSales[itemCode] = newSale;
         }
     }
 
@@ -53,28 +57,28 @@ public class Sale {
      *
      * @return A new array of exact size with the ItemSales in sorted order, by name alphabetically.
      */
-    public SingleItemSale[] sorted() {
+    public ItemSale[] sorted() {
         // Count item sales
         int count = 0;
-        for (SingleItemSale singleItemSale : singleItemSales) {
-            if (singleItemSale != null) {
+        for (ItemSale itemSale : itemSales) {
+            if (itemSale != null) {
                 count++;
             }
         }
 
         // Create new array of item sales that will be sorted
-        SingleItemSale[] sortedSingleItemSales = new SingleItemSale[count];
+        ItemSale[] sortedItemSales = new ItemSale[count];
         int i = 0;
-        for (SingleItemSale singleItemSale : singleItemSales) {
-            if (singleItemSale != null) {
-                sortedSingleItemSales[i] = singleItemSale;
+        for (ItemSale itemSale : itemSales) {
+            if (itemSale != null) {
+                sortedItemSales[i] = itemSale;
                 i++;
             }
         }
 
         // Sort by item name alphabetically
-        Arrays.sort(sortedSingleItemSales, Comparator.comparing(singleItemSale -> singleItemSale.getItem().getItemName()));
-        return sortedSingleItemSales;
+        Arrays.sort(sortedItemSales, Comparator.comparing(Item::getItemName));
+        return sortedItemSales;
     }
 
     /**
@@ -82,14 +86,15 @@ public class Sale {
      */
     public void printSale() {
         System.out.println("Items list:");
-        SingleItemSale[] sortedSingleItemSale = sorted();
-        for (SingleItemSale singleItemSale : sortedSingleItemSale) {
-            System.out.printf("%5d %-13s $ %6.2f\n", singleItemSale.getItemQuantity(), singleItemSale.getItem().getItemName(), singleItemSale.getItem().getUnitPrice() * singleItemSale.getItemQuantity());
+        ItemSale[] sortedItemSale = sorted();
+        for (ItemSale itemSale : sortedItemSale) {
+            System.out.printf("%5d %-13s $ %6.2f\n", itemSale.getItemQuantity(), itemSale.getItemName(), itemSale.getUnitPrice() * itemSale.getItemQuantity());
         }
         System.out.printf("%-20s$ %6.2f\n", "Subtotal", subtotal());
         double totalWithTax = totalWithTax();
         System.out.printf("Total with tax (6%%) $ %6.2f\n", totalWithTax);
 
+        // magic padding
         int digitsBeforeDecimal = 3 - String.format("%.0f", totalWithTax).length();
         String spacePadding = " ".repeat(digitsBeforeDecimal);
         double tendered = Utilities.getDoubleFromUser("Tendered Amount     $ " + spacePadding, totalWithTax);

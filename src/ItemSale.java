@@ -1,36 +1,16 @@
-public class SingleItemSale {
+/**
+ * Extension of Item which additionally contains the quantity of the item sold.
+ */
+public class ItemSale extends Item {
     private final int itemQuantity;
-    private final Item item;
 
     /**
      * @param item         Item that is being sold
      * @param itemQuantity Quantity of item that is being sold
      */
-    public SingleItemSale(Item item, int itemQuantity) {
+    public ItemSale(Item item, int itemQuantity) {
+        super(item.getItemCode(), item.getItemName(), item.getUnitPrice());
         this.itemQuantity = itemQuantity;
-        this.item = item;
-    }
-
-    /**
-     * @param retry True = show error message, False = hide error message
-     * @return Int value from user
-     */
-    private static int getAnInt(boolean retry, String prompt) {
-        // Display error if user inputted garbage or int outside of range
-        if (retry) {
-            System.out.println("!!! Invalid " + prompt);
-            System.out.println();
-        }
-
-        System.out.printf("Enter %-14s", prompt + ":");
-        int x = Integer.MIN_VALUE;
-        if (CashRegister.scanner.hasNextInt()) {
-            x = CashRegister.scanner.nextInt();
-        } else {
-            CashRegister.scanner.next(); // Skip garbage input
-        }
-
-        return x;
     }
 
     /**
@@ -44,7 +24,7 @@ public class SingleItemSale {
         int productCode;
 
         do {
-            productCode = getAnInt(retry, "product code");
+            productCode = Utilities.getAnInt(retry, "product code");
             retry = true;
         } while (!(productCode == -1 || (productCode >= 1 && productCode <= 10)));
 
@@ -61,7 +41,7 @@ public class SingleItemSale {
         int quantity;
 
         do {
-            quantity = getAnInt(retry, "quantity");
+            quantity = Utilities.getAnInt(retry, "quantity");
             retry = true;
         } while (quantity < 1);
 
@@ -74,7 +54,7 @@ public class SingleItemSale {
      * @return The item user chose with quantity. Returns null if user submitted
      * code -1 to stop adding items.
      */
-    public static SingleItemSale doSale() {
+    public static ItemSale doSale() {
         int productCode = retrieveProductCode();
         if (productCode == -1) {
             return null;   // Finish this sale
@@ -88,14 +68,10 @@ public class SingleItemSale {
         System.out.printf("%18s: $ %6.2f\n", "item total", CashRegister.items[productCode].getUnitPrice() * quantity);
         System.out.println();
 
-        return new SingleItemSale(CashRegister.items[productCode], quantity);
+        return new ItemSale(CashRegister.items[productCode], quantity);
     }
 
     public int getItemQuantity() {
         return itemQuantity;
-    }
-
-    public Item getItem() {
-        return item;
     }
 }

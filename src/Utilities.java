@@ -3,7 +3,11 @@ import java.io.FileNotFoundException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * Utility class to handle user input and file io.
+ */
 public class Utilities {
+    private static final Scanner scanner = new Scanner(System.in);
 
     /**
      * Loads store items into memory from the shop.txt file
@@ -47,7 +51,7 @@ public class Utilities {
     public static boolean promptAnotherSale() {
         while (true) {
             System.out.print("Beginning a new sale (Y/N) ");
-            String input = CashRegister.scanner.next();
+            String input = scanner.next();
 
             if (input.equalsIgnoreCase("Y")) {
                 return true;
@@ -66,15 +70,37 @@ public class Utilities {
         while (true) {
             try {
                 System.out.print(prompt);
-                double value = CashRegister.scanner.nextDouble();
+                double value = scanner.nextDouble();
 
                 // Re-prompt if value is below threshold.
                 if (value >= minValue) {
                     return value;
                 }
             } catch (InputMismatchException e) {
-                CashRegister.scanner.nextLine(); // Clear bad input
+                scanner.nextLine(); // Clear bad input
             }
         }
+    }
+
+    /**
+     * @param retry True = show error message, False = hide error message
+     * @return Int value from user
+     */
+    public static int getAnInt(boolean retry, String prompt) {
+        // Display error if user inputted garbage or int outside of range
+        if (retry) {
+            System.out.println("!!! Invalid " + prompt);
+            System.out.println();
+        }
+
+        System.out.printf("Enter %-14s", prompt + ":");
+        int x = Integer.MIN_VALUE;
+        if (scanner.hasNextInt()) {
+            x = scanner.nextInt();
+        } else {
+            scanner.next(); // Skip garbage input
+        }
+
+        return x;
     }
 }

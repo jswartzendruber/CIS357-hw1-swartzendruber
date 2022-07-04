@@ -9,11 +9,14 @@
 //                      can take place during the day. At the end of the day the total
 //                      sale amount for the day is displayed.
 
-import java.util.Scanner;
-
+/**
+ * Driver class for the program, has some setup and both main loops.
+ */
 public class CashRegister {
-    public static Item[] items = Utilities.loadStoreItems();
-    public static Scanner scanner = new Scanner(System.in);
+    /**
+     * Contains array of items that can be sold
+     */
+    public static final Item[] items = Utilities.loadStoreItems();
 
     public static void main(String[] args) {
         System.out.println("Welcome to Swartzendruber cash register system!");
@@ -24,12 +27,12 @@ public class CashRegister {
         while (Utilities.promptAnotherSale()) {
             Sale sale = new Sale();
             System.out.println("--------------------");
-            SingleItemSale singleItemSale = SingleItemSale.doSale();
+            ItemSale itemSale = ItemSale.doSale();
 
             // Prompt user for items until they say -1
-            while (singleItemSale != null) {
-                sale.addSale(singleItemSale);
-                singleItemSale = SingleItemSale.doSale();
+            while (itemSale != null) {
+                sale.addSale(itemSale);
+                itemSale = ItemSale.doSale();
             }
 
             totalSale += sale.subtotal();
